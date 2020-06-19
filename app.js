@@ -11,6 +11,48 @@ var budgetController = (function() {
     //     }
     // }
 
+    var Expense = function(id, description, value){
+        this.id = id;
+        this.description = description;
+        this.value = value;
+    };
+
+    var Income = function(id, description, value){
+        this.id = id;
+        this.description = description;
+        this.value = value;
+    };
+
+//our data structure
+   var data = {
+        allItems: {
+            exp: [],
+            inc: []
+       },
+       totals: {
+           exp: 0,
+           inc: 0
+       }
+   }
+
+   //public method
+   return {
+       //type, description, value
+       //type == inc or exp
+       addItem: function(type, des, val){
+            var newItem, ID;
+            ID = 0;
+            if(type === 'exp'){
+                newItem = new Expense(ID, des, val);
+            } else if(type === 'inc'){
+                newItem = new Income(ID, des, val);
+            }   
+
+            data.allItems[type].push(newItem);
+            return newItem;
+       }
+   }
+
 })();
 
 //UI
@@ -44,19 +86,6 @@ var UIController = (function() {
 
 var controller = (function(budgetCtrl, UICtrl){
 
-    var ctrlAddItem = function(){
-        //1. get the feild input data
-        var input = UICtrl.getInput();
-        console.log(input)
-       //2. Add the item to the budget controller 
-       //3. Add the item to the UI
-       //4. Calculate the budget
-       //5. Display the budget on the UI
-
-       //console.log("enter key or mouse click on check mark worked")
-   }
-
-
     var setupEventListeners = function(){
         var DOM = UICtrl.getDOMstrings();
         //getting ID name of the button //classanem  "add__btn" dont forget the "." like in css
@@ -70,5 +99,26 @@ var controller = (function(budgetCtrl, UICtrl){
         });
     }
 
-   
+    var ctrlAddItem = function(){
+         //1. get the feild input data
+         var input = UICtrl.getInput();
+         console.log(input)
+        //2. Add the item to the budget controller 
+        //3. Add the item to the UI
+        //4. Calculate the budget
+        //5. Display the budget on the UI
+
+        //console.log("enter key or mouse click on check mark worked")
+    }
+
+    return{
+        init: function(){
+            console.log("app has started");
+            setupEventListeners();
+        }
+    }
 })(budgetController, UIController)
+
+
+//triggers the event lisiteners 
+controller.init();
