@@ -1,0 +1,39 @@
+Event bubbling 
+
+
+
+<main>
+    <selection>
+        <p>blablabla</p>
+        <p>
+        blablablablabla
+        <button>Link</button>
+        .   
+        </p>
+    </selection>
+</main>
+
+
+Event bubbling
+    when an event is trigered on som DOM element. 
+    like clicking on our button...
+    then the exact same element is triggered on all of or parent elements 1 at a time
+    so.... <button> ----> <p> ----> <selection> -----> <main> ------> all the way to the root
+
+target Element
+    in this example the <button> that is clicked  is the target element
+    this target element is stored as an event in the event object
+    sp... all the parent elements will know the target of the event
+
+event delegation 
+    if event bubbles up the DOM tree, and we know where the event was triggered 
+    then we can assign an event handler to the parent and wait for the event to bubble up 
+    then do whatever you intend to do with target element 
+    in this example we can add event handler to the <main> element 
+
+
+    why would we want to use event deligation?
+
+    1. When we have an element with lots odf child elements that we are intrested in;
+
+    2. When we want an event handler attached to an element that is not in th DOM when our page is loaded.
