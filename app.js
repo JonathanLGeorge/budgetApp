@@ -23,6 +23,22 @@ var budgetController = (function() {
         this.value = value;
     };
 
+    var calculateTotal = function(type){
+        var sum = 0;
+        data.allItems[type].forEach(function(current){
+            sum = sum + current.value;
+        });
+        /*
+        0
+        [200,400,100]
+        sum = 0 + 200
+        next iteration 
+        sum = 200 + 400
+        ... 600 + 100
+        ...700 + ...
+        */
+       data.totals[type] = sum;
+    }
 //our data structure
    var data = {
         allItems: {
@@ -32,7 +48,10 @@ var budgetController = (function() {
        totals: {
            exp: 0,
            inc: 0
-       }
+       },
+       budget: 0,
+       //we use -1 if none existant, which is true at first
+       percentage: -1
    }
 
    //public method
@@ -61,7 +80,33 @@ var budgetController = (function() {
             data.allItems[type].push(newItem);
             //returns new element 
             return newItem;
-       },
+        },
+        calculateBudget: function(){
+            // calculate total income and expenses
+            calculateTotal('exp');
+            calculateTotal('inc');
+            //calculate the budget: income - expenses
+            data.budget = data.totals.inc - data.totals.exp;
+            
+            //calculate the percentage of income that we spent
+            //only want to use if we have some income
+            if(data.totals.inc > 0){
+                data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
+                // say we have expenses = 100 and income 200, we spent 50% = 100/200 = 0.5 *100
+            }else{
+                // -1 means none existant 
+                data.percentage = -1; 
+            }
+            
+        },
+        getBudget: function(){
+            return {
+                budget: data.budget,
+                totalInc: data.totals.inc,
+                totalExp: data.totals.exp,
+                percentages: data.percentage
+            }
+        },
        //testing/bedugeing. in console type budgetContoller.testing
        testing: function(){
            console.log(data)
@@ -77,7 +122,9 @@ var UIController = (function() {
         inputType: '.add__type',
         inputDescription: 'add__description',
         inputValue: 'add__value',
-        inputBtn: 'add__btn'
+        inputBtn: 'add__btn',
+        incomeContainer: '.income__list',
+        expenseContainer: '.'
     }
 
     return {
@@ -87,7 +134,8 @@ var UIController = (function() {
                 //'inc' is income and 'exp' is expensies 
                 type: document.querySelector(DOMstrings.inputType).value, //will be either inc or exp
                 description: document.querySelector(DOMstrings.inputDescription).value,
-                value: document.querySelector(DOMstrings.inputValue).value
+                //we need to parse float cause we need to have floating point and not a string to do calculations
+                value: parseFloat(document.querySelector(DOMstrings.inputValue).value)
             };
         },
         //same as using function concruture and them pass to app controller?? 
@@ -113,6 +161,19 @@ var UIController = (function() {
 
 
         },
+        clearFields: function(){
+           var fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue)
+            //this is a trick, now we have an array of fields
+            var fieldsArray = Array.prototype.slice.call(fields);
+
+
+            //used back in out controller, will clear the input fields so you dont need to constantly delete everything 
+            fieldsArray.forEach(function(current, index, array){
+                current.value = "";
+            })
+            //refocuses description so you dont need to click arround as much 
+            fieldsArray[0].focus
+        },
 
         getDOMstrings: function() {
             return DOMstrings;
@@ -136,7 +197,15 @@ var controller = (function(budgetCtrl, UICtrl){
             }
         });
     }
-
+    //called each time we enter a new item. invoked from ctrlAddItem 
+    var updateBudget = function(){
+        //1 calculate the budget
+      budgetCtrl.calculateBudget();
+        //2 return the budget
+        var budget = budgetCtrl.getBudget();
+        //3 Display the budget in the UI
+        console.log(budget);
+    };
     //this is like the controll center of our app, it tells the other modules what is should do, and then it gets data back to use
     var ctrlAddItem = function(){
         var input, newItem; 
@@ -145,13 +214,20 @@ var controller = (function(budgetCtrl, UICtrl){
          input = UICtrl.getInput();
          console.log(input)
         
-         //2. Add the item to the budget controller 
-        newItem = budgetCtrl.addItem(input.type, input.description, input.value);
-        //3. Add the item to the UI
-        //4. Calculate the budget
-        //5. Display the budget on the UI
-
-        //console.log("enter key or mouse click on check mark worked")
+        //making sure we get all our fields filled out or it wont excicute. 
+         if(input.description !== "" && !isNaN(input.value) && input.value > 0){
+            //2. Add the item to the budget controller 
+            newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+            //3. Add the item to the UI
+            UICtrl.addListItem(newItem, input.type)
+            //4. Calculate the budget
+            //clear feilds
+            UICtrl.clearFields();
+            //5. Display the budget on the UI
+            //this is now a fuction update budget so we keep things DRY
+            updateBudget();
+            //console.log("enter key or mouse click on check mark worked")
+         }
     }
 
     return{
