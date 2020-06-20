@@ -1,7 +1,5 @@
 Event bubbling 
-
-
-
+============================
 <main>
     <selection>
         <p>blablabla</p>
@@ -12,6 +10,7 @@ Event bubbling
         </p>
     </selection>
 </main>
+===============================
 
 
 Event bubbling
