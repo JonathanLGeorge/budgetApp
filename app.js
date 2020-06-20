@@ -1,3 +1,5 @@
+const { UserInfo } = require("git");
+
 //modual pattern 
 var budgetController = (function() {
     // var x = 23;
@@ -124,7 +126,11 @@ var UIController = (function() {
         inputValue: 'add__value',
         inputBtn: 'add__btn',
         incomeContainer: '.income__list',
-        expenseContainer: '.'
+        expenseContainer: '.expenses__list',
+        budgetLabel: '.budget__value',
+        incomeLabel: '.budget__income--value',
+        expensesLabel: ''
+
     }
 
     return {
@@ -174,7 +180,25 @@ var UIController = (function() {
             //refocuses description so you dont need to click arround as much 
             fieldsArray[0].focus
         },
+        displayBudget: function(obj){
+            /// more dom manipulation 
 
+            // budget: data.budget,
+            // totalInc: data.totals.inc,
+            // totalExp: data.totals.exp,
+            // percentages: data.percentage
+            document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
+            document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalInc;
+            document.querySelector(DOMstrings.expensesLabel).textContent = obj.totalExp;
+            document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage;
+
+            //we want to keep in mind the % shown in expenses. what if its our budget is in the negative, 
+            if(obj.percentage > 0){
+
+            } else {
+
+            }
+        },
         getDOMstrings: function() {
             return DOMstrings;
         }
@@ -233,6 +257,13 @@ var controller = (function(budgetCtrl, UICtrl){
     return{
         init: function(){
             console.log("app has started");
+            UICtrl.displayBudget({
+                budget: 0,
+                totalExp: 0,
+                totalInc: 0,
+                percentage: -1
+            });
+
             setupEventListeners();
         }
     }
@@ -241,3 +272,20 @@ var controller = (function(budgetCtrl, UICtrl){
 
 //triggers the event lisiteners 
 controller.init();
+
+/**
+      {Budget Controller}        {AppController}                   {UI Controller}
+|--------[addItem]<------------------[crlAddItem]--------------------|->[getInput]
+|   |<--[calculate]<------------|        | (click/key press)       |->[addListItem]
+|   |                           |        |                         |
+|   |-->[calculateTotal]        |        |                         |->[clearFields]
+|                               |        V
+|      [get Budget]<------------|----[updateBudget]----------------->[displayBudget]
+|  
+|  (Expense/income constructors )
+|-->[Expense] 
+|or
+|-->[Income] 
+ * 
+ * 
+ */
