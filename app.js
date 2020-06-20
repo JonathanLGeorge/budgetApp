@@ -280,12 +280,13 @@ controller.init();
 |   |                           |        |                         |
 |   |-->[calculateTotal]        |        |                         |->[clearFields]
 |                               |        V
-|      [get Budget]<------------|----[updateBudget]----------------->[displayBudget]
-|  
-|  (Expense/income constructors )
-|-->[Expense] 
-|or
-|-->[Income] 
+|      [get Budget]<------------|----[updateBudget]-------------|->--->[displayBudget]
+|                                                               |
+|  (Expense/income constructors )                               |
+|-->[Expense]                       [setupEventListeners]---------->[getDOMstrings]
+|or                                     ^                       |
+|or                                     |                       |
+|-->[Income]                     -->[init]--------------------->|
  * 
  * 
  */
