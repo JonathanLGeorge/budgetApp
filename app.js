@@ -134,6 +134,17 @@ var budgetController = (function() {
                 data.allItems[type].splice(index, 1);
             }
         },
+        calculatePercentage: function(){
+            data.allItems.exp.forEach(function(cur){
+                cur.calculatePercentage(data.totals.inc);
+            })
+        },
+        getPercentages: function(){
+            var allPerc = data.allItems.exp.map(function(cur){
+                return cur.getPercentage();
+            })
+            return allPerc;
+        },
        //testing/bedugeing. in console type budgetContoller.testing
        testing: function(){
            console.log(data)
