@@ -1,0 +1,11 @@
+when will the income % be updated
+    %s and calculated and updated each time we add or delete an item 
+
+
+ new funcion updatePercentages
+    1: calculate %'s
+    2: Read %'s from the budget controller
+    3: Update the UIwith the new percentges
+
+update  ctrlAddItem()
+    calculate and update %'s
