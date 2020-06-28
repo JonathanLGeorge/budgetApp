@@ -36,3 +36,6 @@ event delegation
     1. When we have an element with lots odf child elements that we are intrested in;
 
     2. When we want an event handler attached to an element that is not in th DOM when our page is loaded.
+
+
+
